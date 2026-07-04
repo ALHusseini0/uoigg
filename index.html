@@ -1,0 +1,2190 @@
+
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+    <title>AloeCare · الألوفيرا</title>
+    <!-- Firebase SDK (compat) -->
+    <script src="https://www.gstatic.com/firebasejs/12.15.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.15.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.15.0/firebase-database-compat.js"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* ===== جميع الأنماط ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Tahoma', system-ui, sans-serif;
+        }
+        body {
+            background: #f5fcf9;
+            color: #15312b;
+            padding: 0 16px 40px;
+            line-height: 1.6;
+        }
+        .container { max-width: 1250px; margin: 0 auto; }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            padding: 18px 20px 12px;
+            border-bottom: 3px solid #b3d9cd;
+            background: linear-gradient(135deg, #ffffff 0%, #ecf9f3 100%);
+            border-radius: 0 0 50px 50px;
+            margin-bottom: 8px;
+            box-shadow: 0 6px 18px rgba(0, 40, 30, 0.04);
+        }
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .logo-area .logo-circle {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #1a7a62, #2ba885);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 24px rgba(26, 107, 87, 0.3);
+            animation: float 3s ease-in-out infinite;
+            border: 3px solid #d4f0e5;
+            transition: 0.3s;
+        }
+        .logo-circle img {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+            border-radius: 50%;
+            filter: drop-shadow(0 2px 8px rgba(0,0,0,0.1));
+        }
+        @keyframes float {
+            0% { transform: translateY(0px) scale(1); }
+            50% { transform: translateY(-6px) scale(1.02); }
+            100% { transform: translateY(0px) scale(1); }
+        }
+        .logo-area h1 {
+            font-size: 2.4rem;
+            font-weight: 300;
+            letter-spacing: 2px;
+            color: #0f463b;
+        }
+        .logo-area h1 span { font-weight: 800; color: #1a8367; }
+
+        .nav-links {
+            display: flex;
+            gap: 18px;
+            flex-wrap: wrap;
+            font-weight: 500;
+            align-items: center;
+        }
+        .nav-links a {
+            text-decoration: none;
+            color: #1a5649;
+            font-size: 1.05rem;
+            padding: 6px 6px;
+            border-bottom: 3px solid transparent;
+            transition: 0.25s;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .nav-links a i { margin-left: 6px; }
+        .nav-links a:hover, .nav-links a.active {
+            border-bottom-color: #2ba885;
+            color: #07332a;
+            transform: translateY(-2px);
+        }
+        .nav-links .cart-icon {
+            font-size: 1.4rem;
+            position: relative;
+        }
+        .nav-links .cart-icon .badge {
+            position: absolute;
+            top: -10px;
+            right: -14px;
+            background: #c0392b;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 8px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            animation: pulse-badge 1.5s infinite;
+        }
+        @keyframes pulse-badge {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+            100% { transform: scale(1); }
+        }
+        .orders-link {
+            position: relative;
+            cursor: pointer;
+        }
+        .orders-link .badge-orders {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #2980b9;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 8px;
+            font-size: 0.65rem;
+            font-weight: 700;
+        }
+        .support-link {
+            color: #e67e22 !important;
+            font-weight: 700 !important;
+            position: relative;
+        }
+        .support-link:hover { border-bottom-color: #e67e22 !important; }
+        .support-link .badge-support {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #e74c3c;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 8px;
+            font-size: 0.6rem;
+            font-weight: 700;
+            animation: pulse-badge 1.5s infinite;
+        }
+
+        .phone-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 14px;
+            margin: 22px 0 22px;
+            flex-wrap: wrap;
+        }
+        .phone-tabs button {
+            background: #ffffff;
+            border: 2px solid #b8d9cd;
+            padding: 14px 32px;
+            border-radius: 80px;
+            font-size: 1rem;
+            font-weight: 700;
+            color: #134b40;
+            cursor: pointer;
+            transition: 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 30, 20, 0.02);
+            flex: 1 0 auto;
+            max-width: 210px;
+            background: #f6fdfa;
+        }
+        .phone-tabs button i { margin-left: 10px; }
+        .phone-tabs button.active {
+            background: #1a6b57;
+            color: white;
+            border-color: #1a6b57;
+            box-shadow: 0 8px 20px rgba(26, 107, 87, 0.3);
+            transform: scale(1.02);
+        }
+
+        .page {
+            display: block !important;
+            margin-top: 14px;
+            animation: fadeSlide 0.5s ease;
+            border-radius: 40px;
+            padding: 6px 0;
+        }
+        .page:not(.active-page) {
+            display: none !important;
+        }
+        .page.active-page {
+            display: block !important;
+        }
+        @keyframes fadeSlide {
+            0% { opacity: 0.3; transform: translateY(18px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 40px;
+            padding: 28px 32px;
+            margin-bottom: 32px;
+            box-shadow: 0 16px 40px rgba(0, 40, 30, 0.04);
+            border: 1px solid #d9eee6;
+            transition: 0.25s;
+            position: relative;
+            overflow: hidden;
+        }
+        .card:hover {
+            border-color: #8fcbbc;
+            box-shadow: 0 18px 44px rgba(20, 80, 60, 0.06);
+        }
+        .card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 6px;
+            height: 100%;
+            background: linear-gradient(to bottom, #3cb392, #1b7a62);
+            border-radius: 40px 0 0 40px;
+        }
+        .title-xl {
+            font-size: 2.5rem;
+            font-weight: 300;
+            color: #0c3f34;
+            margin-bottom: 18px;
+            letter-spacing: -0.3px;
+        }
+        .title-xl strong { font-weight: 800; color: #1f8b6e; }
+        .section-title {
+            font-size: 2.1rem;
+            font-weight: 300;
+            margin: 28px 0 20px;
+            color: #0f4d3e;
+            border-right: 10px solid #46b398;
+            padding-right: 20px;
+            background: linear-gradient(to left, #edfaf5, transparent);
+            border-radius: 0 30px 30px 0;
+        }
+
+        .product-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px 20px;
+            justify-content: center;
+            margin: 24px 0;
+        }
+        .product-item {
+            background: #fafffd;
+            border-radius: 36px;
+            padding: 20px 16px 24px;
+            flex: 1 1 220px;
+            max-width: 280px;
+            box-shadow: 0 6px 18px rgba(0, 30, 10, 0.02);
+            border: 1px solid #d4ece1;
+            text-align: center;
+            transition: 0.3s cubic-bezier(0.2, 0.9, 0.3, 1.1);
+            position: relative;
+        }
+        .product-item:hover {
+            transform: translateY(-8px) scale(1.01);
+            border-color: #5cbca2;
+            box-shadow: 0 20px 36px rgba(30, 90, 70, 0.08);
+        }
+        .product-item img {
+            width: 100%;
+            height: 170px;
+            object-fit: cover;
+            border-radius: 28px;
+            background: #ecf9f3;
+            margin-bottom: 14px;
+            border: 3px solid #eaf7f0;
+            transition: 0.3s;
+        }
+        .product-item:hover img {
+            border-color: #7bcbb4;
+        }
+        .product-item .price {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #0d6b53;
+            margin: 6px 0 4px;
+        }
+        .product-item .note {
+            font-size: 0.78rem;
+            color: #216856;
+            background: #e1f3eb;
+            padding: 8px 14px;
+            border-radius: 40px;
+            display: inline-block;
+            margin-top: 8px;
+        }
+        .add-to-cart-btn {
+            background: #1a6b57;
+            color: white;
+            border: none;
+            padding: 12px 22px;
+            border-radius: 60px;
+            font-size: 1rem;
+            margin-top: 16px;
+            cursor: pointer;
+            transition: 0.25s;
+            box-shadow: 0 6px 16px rgba(26, 107, 87, 0.25);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+        }
+        .add-to-cart-btn i { font-size: 1.1rem; }
+        .add-to-cart-btn:hover { background: #0d5f4b; transform: scale(1.03); box-shadow: 0 8px 22px rgba(20, 80, 60, 0.3); }
+        .add-to-cart-btn.added { background: #27ae60; }
+        .whatsapp-only {
+            background: #25a35a;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 60px;
+            font-size: 1rem;
+            margin-top: 16px;
+            cursor: pointer;
+            transition: 0.25s;
+            box-shadow: 0 6px 16px rgba(37, 163, 90, 0.25);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .whatsapp-only i { font-size: 1.2rem; }
+        .whatsapp-only:hover { background: #1d8a4b; transform: scale(1.03); }
+
+        .reviews-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            justify-content: center;
+            margin: 16px 0;
+        }
+        .review-box {
+            background: white;
+            padding: 26px 22px;
+            border-radius: 40px;
+            flex: 1 1 200px;
+            max-width: 280px;
+            border: 1px solid #d4eae1;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.01);
+            transition: 0.25s;
+            animation: popIn 0.5s ease;
+        }
+        @keyframes popIn {
+            0% { transform: scale(0.9); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .review-box:hover {
+            border-color: #6fc0aa;
+            transform: translateY(-4px);
+            box-shadow: 0 12px 28px rgba(20, 70, 50, 0.04);
+        }
+        .stars {
+            color: #f5b342;
+            letter-spacing: 4px;
+            font-size: 1.5rem;
+        }
+        .review-text {
+            font-size: 1rem;
+            margin: 14px 0 6px;
+            color: #0d3f33;
+        }
+        .review-date {
+            font-size: 0.75rem;
+            color: #3f7a69;
+        }
+        .review-user {
+            font-weight: 600;
+            color: #1a6b57;
+            font-size: 0.9rem;
+        }
+        .add-review-area {
+            background: white;
+            border-radius: 40px;
+            padding: 24px 28px;
+            border: 1px solid #d4ece1;
+            margin-top: 20px;
+        }
+        .add-review-area textarea {
+            width: 100%;
+            padding: 14px 18px;
+            border: 1px solid #c4ddd2;
+            border-radius: 60px;
+            font-size: 1rem;
+            background: white;
+            resize: vertical;
+            min-height: 80px;
+        }
+        .add-review-area .stars-select {
+            display: flex;
+            gap: 8px;
+            font-size: 2rem;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+        .add-review-area .stars-select i {
+            transition: 0.2s;
+            color: #ddd;
+        }
+        .add-review-area .stars-select i.active {
+            color: #f5b342;
+        }
+        .add-review-area .stars-select i:hover {
+            transform: scale(1.2);
+        }
+        .review-submit-btn {
+            background: #1a6b57;
+            color: white;
+            border: none;
+            padding: 12px 32px;
+            border-radius: 60px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 10px;
+        }
+        .review-submit-btn:hover { background: #0f5544; transform: scale(1.02); }
+
+        .contact-line {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px 34px;
+            background: #e3f5ed;
+            border-radius: 80px;
+            padding: 20px 32px;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            border: 1px solid #b8d9cd;
+            transition: 0.2s;
+        }
+        .contact-line:hover { background: #daf0e7; }
+        .contact-line i { margin-left: 12px; color: #0d6b53; width: 26px; }
+        .brand-bar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 28px 54px;
+            padding: 22px 16px;
+            margin: 20px 0 16px;
+            border-top: 3px dashed #b3d5c8;
+            border-bottom: 3px dashed #b3d5c8;
+            background: #f4fdf9;
+            border-radius: 80px;
+        }
+        .brand-bar span {
+            font-size: 1.15rem;
+            color: #115a47;
+            font-weight: 500;
+        }
+        .brand-bar i { font-size: 1.5rem; margin-left: 12px; color: #1d8a6e; }
+
+        .order-box {
+            background: #f5fdf9;
+            border-radius: 40px;
+            padding: 28px 32px;
+            border: 1px solid #cae3d9;
+            box-shadow: 0 8px 24px rgba(0, 30, 20, 0.02);
+        }
+        .order-box input, .order-box textarea {
+            width: 100%;
+            padding: 16px 20px;
+            margin: 8px 0 16px;
+            border: 1px solid #c4ddd2;
+            border-radius: 60px;
+            background: white;
+            font-size: 1rem;
+            transition: 0.2s;
+        }
+        .order-box input:focus, .order-box textarea:focus {
+            border-color: #3ab08f;
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(58, 176, 143, 0.12);
+        }
+        .order-box textarea { border-radius: 32px; resize: vertical; }
+        .order-btn {
+            background: #1a6b57;
+            border: none;
+            color: white;
+            font-weight: 700;
+            padding: 18px 36px;
+            border-radius: 80px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: 0.2s;
+            width: 100%;
+            box-shadow: 0 8px 20px rgba(20, 80, 60, 0.25);
+        }
+        .order-btn:hover { background: #0f5544; transform: scale(1.01); }
+        .cart-summary {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.25rem;
+            border-top: 2px solid #cce3da;
+            padding-top: 20px;
+            margin-top: 14px;
+        }
+        .msg-confirm {
+            background: #cae8dc;
+            padding: 16px 24px;
+            border-radius: 80px;
+            text-align: center;
+            font-weight: 600;
+            display: none;
+            margin: 18px 0 6px;
+            color: #0a4033;
+        }
+        .location-btn {
+            background: #2980b9;
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 60px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.25s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 6px;
+            box-shadow: 0 6px 16px rgba(41, 128, 185, 0.25);
+        }
+        .location-btn:hover { background: #1f6a9a; transform: scale(1.02); }
+        .location-btn i { font-size: 1.2rem; }
+
+        .cart-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: white;
+            padding: 10px 16px;
+            border-radius: 60px;
+            margin-bottom: 8px;
+            border: 1px solid #d4ece1;
+            animation: slideIn 0.3s ease;
+        }
+        @keyframes slideIn {
+            0% { transform: translateX(-20px); opacity: 0; }
+            100% { transform: translateX(0); opacity: 1; }
+        }
+        .cart-item img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 2px solid #eaf7f0;
+        }
+        .cart-item .item-info {
+            flex: 1;
+            margin: 0 12px;
+        }
+        .cart-item .item-info .item-name {
+            font-weight: 600;
+            color: #0f463b;
+        }
+        .cart-item .item-info .item-price {
+            font-size: 0.85rem;
+            color: #1a6b57;
+        }
+        .cart-item .remove-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .cart-item .remove-btn:hover { background: #c0392b; transform: scale(1.1); }
+
+        .footer-note {
+            text-align: center;
+            color: #2c6a5a;
+            font-size: 1rem;
+            margin-top: 40px;
+            border-top: 3px solid #d4e9e0;
+            padding-top: 32px;
+        }
+
+        .orders-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin: 16px 0;
+        }
+        .order-card {
+            background: white;
+            border-radius: 30px;
+            padding: 20px 24px;
+            border: 1px solid #d4ece1;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+            cursor: pointer;
+            transition: 0.25s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .order-card:hover {
+            border-color: #5cbca2;
+            transform: translateX(6px);
+            box-shadow: 0 8px 24px rgba(20, 80, 60, 0.06);
+        }
+        .order-card .order-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .order-card .order-info .order-id {
+            font-weight: 700;
+            color: #0f463b;
+        }
+        .order-card .order-info .order-time {
+            font-size: 0.85rem;
+            color: #3a7867;
+        }
+        .order-card .order-status {
+            background: #e1f3eb;
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #1a6b57;
+        }
+        .order-card .order-status.confirmed {
+            background: #fef9e7;
+            color: #b7950b;
+        }
+        .edit-locked {
+            color: #e67e22;
+            font-size: 0.75rem;
+            background: #fef9e7;
+            padding: 2px 12px;
+            border-radius: 40px;
+            display: inline-block;
+        }
+
+        .order-detail-box {
+            background: #f5fdf9;
+            border-radius: 40px;
+            padding: 28px 32px;
+            border: 1px solid #cae3d9;
+            box-shadow: 0 8px 24px rgba(0, 30, 20, 0.02);
+        }
+        .order-detail-box .detail-row {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin-bottom: 16px;
+        }
+        .order-detail-box .detail-row label {
+            font-weight: 600;
+            color: #0f463b;
+            font-size: 0.9rem;
+        }
+        .order-detail-box .detail-row input {
+            padding: 14px 18px;
+            border: 1px solid #c4ddd2;
+            border-radius: 60px;
+            font-size: 1rem;
+            background: white;
+        }
+        .order-detail-box .detail-row input:focus {
+            border-color: #3ab08f;
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(58, 176, 143, 0.12);
+        }
+        .order-detail-box .detail-row input:disabled {
+            background: #ecf8f2;
+            opacity: 0.7;
+        }
+        .order-detail-box .back-btn {
+            background: #c4ddd2;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 60px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            color: #0f463b;
+            margin-bottom: 16px;
+        }
+        .order-detail-box .back-btn:hover { background: #b0d0c3; }
+
+        .car-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(6px);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .car-overlay.active {
+            display: flex;
+        }
+        .car-container {
+            background: linear-gradient(145deg, #e8f5f0, #d0ece3);
+            padding: 30px 40px 50px;
+            border-radius: 80px;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 550px;
+            width: 90%;
+            border: 4px solid #b8d9cd;
+            position: relative;
+            overflow: hidden;
+        }
+        .car-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 40%, rgba(58, 176, 143, 0.05) 0%, transparent 70%);
+            animation: shimmer 6s infinite alternate;
+        }
+        @keyframes shimmer {
+            0% { transform: translate(-10%, -10%) rotate(0deg); }
+            100% { transform: translate(10%, 10%) rotate(10deg); }
+        }
+        .car-container h3 {
+            color: #0f463b;
+            font-weight: 700;
+            font-size: 2rem;
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 1;
+        }
+        .road {
+            position: relative;
+            width: 100%;
+            height: 140px;
+            background: #3a5f52;
+            border-radius: 30px;
+            overflow: hidden;
+            margin: 10px 0 20px;
+            border: 5px solid #2a4d40;
+            box-shadow: inset 0 10px 30px rgba(0,0,0,0.2);
+            position: relative;
+            z-index: 1;
+        }
+        .road::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: repeating-linear-gradient(90deg, #f5e6a3, #f5e6a3 40px, transparent 40px, transparent 60px);
+            transform: translateY(-50%);
+            animation: roadMove 1s linear infinite;
+        }
+        @keyframes roadMove {
+            0% { background-position: 0 0; }
+            100% { background-position: 100px 0; }
+        }
+        .car {
+            position: absolute;
+            bottom: 12px;
+            left: -100px;
+            font-size: 4rem;
+            color: #e74c3c;
+            animation: driveCar 4s ease-in-out forwards;
+            filter: drop-shadow(0 8px 20px rgba(0,0,0,0.3));
+            z-index: 2;
+        }
+        .car i { display: block; text-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        .car .wheels {
+            display: flex;
+            gap: 22px;
+            margin-top: -10px;
+            justify-content: center;
+        }
+        .car .wheels i {
+            font-size: 1.6rem;
+            color: #1a1a1a;
+            animation: spinWheel 0.5s linear infinite;
+        }
+        @keyframes spinWheel {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.1); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+        @keyframes driveCar {
+            0% { left: -100px; opacity: 0.8; }
+            20% { opacity: 1; }
+            100% { left: calc(100% - 40px); opacity: 1; }
+        }
+        .car-container .msg {
+            font-size: 1.4rem;
+            color: #0f463b;
+            font-weight: 700;
+            margin-top: 8px;
+            position: relative;
+            z-index: 1;
+        }
+        .car-container .sub {
+            font-size: 1rem;
+            color: #2d6b59;
+            margin-top: 4px;
+            position: relative;
+            z-index: 1;
+        }
+        .car-container .support-numbers {
+            margin-top: 16px;
+            padding: 12px;
+            background: rgba(255,255,255,0.5);
+            border-radius: 60px;
+            font-size: 0.9rem;
+            color: #1a5649;
+            position: relative;
+            z-index: 1;
+        }
+        .car-container .support-numbers i { margin: 0 6px; color: #25a35a; }
+        .close-car-btn {
+            margin-top: 20px;
+            background: #1a6b57;
+            border: none;
+            color: white;
+            padding: 14px 40px;
+            border-radius: 60px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 8px 24px rgba(26, 107, 87, 0.3);
+        }
+        .close-car-btn:hover { background: #0f5544; transform: scale(1.03); }
+
+        .auth-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.92);
+            backdrop-filter: blur(6px);
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+        }
+        .auth-overlay.active {
+            display: flex;
+        }
+        .auth-box {
+            background: white;
+            padding: 40px 36px;
+            border-radius: 60px;
+            box-shadow: 0 24px 60px rgba(0, 40, 30, 0.08);
+            max-width: 420px;
+            width: 90%;
+            border: 1px solid #d4ece1;
+        }
+        .auth-box h2 {
+            font-weight: 300;
+            color: #0f463b;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+        .auth-box input {
+            width: 100%;
+            padding: 16px 18px;
+            margin: 10px 0;
+            border: 1px solid #c4ddd2;
+            border-radius: 60px;
+            font-size: 1rem;
+            background: #fafffd;
+        }
+        .auth-box input:focus {
+            border-color: #3ab08f;
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(58, 176, 143, 0.12);
+        }
+        .auth-box .auth-btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            background: #1a6b57;
+            color: white;
+            font-weight: 700;
+            border-radius: 60px;
+            font-size: 1.1rem;
+            margin-top: 14px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .auth-box .auth-btn:hover { background: #0f5544; }
+        .auth-box .switch-link {
+            text-align: center;
+            margin-top: 16px;
+            color: #1a6b57;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .auth-box .switch-link:hover { text-decoration: underline; }
+        .close-auth {
+            text-align: center;
+            margin-top: 12px;
+            cursor: pointer;
+            color: #5f7f73;
+            font-size: 0.9rem;
+        }
+
+        .admin-panel {
+            background: #f8f0fa;
+            border-radius: 40px;
+            padding: 28px 32px;
+            border: 2px solid #9b59b6;
+            margin-bottom: 30px;
+        }
+        .admin-panel h3 {
+            color: #6c3483;
+            margin-bottom: 16px;
+        }
+        .admin-panel input, .admin-panel textarea {
+            width: 100%;
+            padding: 12px 18px;
+            margin: 6px 0 12px;
+            border: 1px solid #c4ddd2;
+            border-radius: 60px;
+            font-size: 1rem;
+            background: white;
+        }
+        .admin-panel textarea { border-radius: 32px; resize: vertical; }
+        .admin-panel .admin-btn {
+            background: #8e44ad;
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 60px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .admin-panel .admin-btn:hover { background: #6c3483; transform: scale(1.02); }
+        .admin-panel .product-list-admin {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 12px;
+        }
+        .admin-panel .product-list-admin .admin-product-item {
+            background: white;
+            padding: 10px 16px;
+            border-radius: 40px;
+            border: 1px solid #d4ece1;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .admin-panel .product-list-admin .admin-product-item .del-prod {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .admin-login-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.92);
+            backdrop-filter: blur(6px);
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+        }
+        .admin-login-overlay.active {
+            display: flex;
+        }
+
+        @media (max-width: 700px) {
+            .header { flex-direction: column; align-items: start; gap: 8px; }
+            .logo-area h1 { font-size: 1.7rem; }
+            .phone-tabs button { max-width: 100%; flex:1; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Car Animation Overlay -->
+<div class="car-overlay" id="carOverlay">
+    <div class="car-container">
+        <h3><i class="fas fa-truck" style="color:#1a6b57;"></i> الأوردر في الطريق!</h3>
+        <div class="road">
+            <div class="car" id="carAnim">
+                <i class="fas fa-truck"></i>
+                <div class="wheels">
+                    <i class="fas fa-circle"></i>
+                    <i class="fas fa-circle"></i>
+                </div>
+            </div>
+        </div>
+        <div class="msg">✅ تم تأكيد طلبك بنجاح</div>
+        <div class="sub">🚚 سيارة التوصيل في طريقها إليك</div>
+        <div class="support-numbers">
+            <i class="fas fa-headset"></i> للدعم: 
+            <a href="tel:01090070592" style="color:#1a6b57; text-decoration:none; font-weight:600;">01090070592</a> 
+            <i class="fas fa-phone" style="margin-right:10px;"></i>
+            <a href="tel:01286131419" style="color:#1a6b57; text-decoration:none; font-weight:600;">01286131419</a>
+        </div>
+        <button class="close-car-btn" id="closeCarBtn">حسناً</button>
+    </div>
+</div>
+
+<!-- Auth Overlay -->
+<div class="auth-overlay" id="authOverlay">
+    <div class="auth-box" id="authBox">
+        <h2 id="authTitle">تسجيل الدخول</h2>
+        <input type="email" id="authEmail" placeholder="البريد الإلكتروني">
+        <input type="password" id="authPassword" placeholder="كلمة السر">
+        <button class="auth-btn" id="authActionBtn">دخول</button>
+        <div class="switch-link" id="switchAuthLink">ليس لديك حساب؟ سجل الآن</div>
+        <div class="close-auth" id="closeAuth">✕ إلغاء</div>
+    </div>
+</div>
+
+<!-- Admin Login Overlay (خدمة العملاء) -->
+<div class="admin-login-overlay" id="adminLoginOverlay">
+    <div class="auth-box" id="adminBox">
+        <h2><i class="fas fa-user-shield"></i> دخول خدمة العملاء</h2>
+        <input type="email" id="adminEmail" placeholder="البريد الإلكتروني للأدمن" value="admin@aloecare.com">
+        <input type="password" id="adminPassword" placeholder="كلمة السر">
+        <button class="auth-btn" id="adminLoginBtn">دخول</button>
+        <div class="close-auth" id="closeAdminLogin">✕ إلغاء</div>
+    </div>
+</div>
+
+<div class="container">
+
+    <!-- Header -->
+    <div class="header">
+        <div class="logo-area">
+            <div class="logo-circle">
+                <img src="https://i.postimg.cc/x8QBKTbv/file-00000000126871f4ac3c9114e3ddb253-(1).png" alt="AloeCare">
+            </div>
+            <h1>Aloe<span>Care</span></h1>
+        </div>
+        <div class="nav-links">
+            <a class="nav-link active" data-page="page-home"><i class="fas fa-home"></i> الرئيسية</a>
+            <a class="nav-link" data-page="page-about"><i class="fas fa-users"></i> من نحن</a>
+            <a class="nav-link" data-page="page-products"><i class="fas fa-seedling"></i> المنتجات</a>
+            <a class="nav-link" data-page="page-reviews"><i class="fas fa-star"></i> آراء</a>
+            <a class="nav-link" data-page="page-contact"><i class="fas fa-phone"></i> تواصل</a>
+            <a class="nav-link orders-link" id="ordersNavLink">
+                <i class="fas fa-clipboard-list"></i> الطلبات
+                <span class="badge-orders" id="ordersBadge">0</span>
+            </a>
+            <a class="nav-link cart-icon" data-page="page-order" id="cartNavLink">
+                <i class="fas fa-shopping-cart"></i>
+                <span class="badge" id="cartBadge">0</span>
+            </a>
+            <a class="nav-link support-link" id="adminNavLink">
+                <i class="fas fa-headset"></i> خدمة العملاء
+                <span class="badge-support">👑</span>
+            </a>
+            <a id="authNavLink" style="cursor:pointer; border-bottom-color: transparent;"><i class="fas fa-user"></i> تسجيل</a>
+        </div>
+    </div>
+
+    <!-- Phone Tabs -->
+    <div class="phone-tabs">
+        <button class="tab-btn active" data-page="page-home"><i class="fas fa-leaf"></i> الرئيسية</button>
+        <button class="tab-btn" data-page="page-products"><i class="fas fa-seedling"></i> المنتجات</button>
+        <button class="tab-btn" data-page="page-contact"><i class="fas fa-phone-alt"></i> تواصل</button>
+    </div>
+
+    <!-- ===== PAGES ===== -->
+
+    <!-- Home -->
+    <div id="page-home" class="page active-page">
+        <div class="card">
+            <div class="title-xl"><strong>فريق Aloe Care:</strong> شغف الزراعة وإتقان الاستخلاص</div>
+            <p style="font-size:1.1rem; color: #1a473e;">يمثل فريق Aloe Care نخبة من الخبراء المتخصصين الذين يجمعون بين الشغف بالطبيعة والخبرة العلمية العميقة في زراعة واستخلاص نبات الألوفيرا. بفضل جهود فريقنا المتواصلة في إدارة مزارعنا الخاصة، نضمن اختيار ورعاية أجود أنواع الصبار ضمن بيئة مثالية ومراقبة بدقة، مما يضمن أعلى تركيزات للعناصر الغذائية والمواد الفعالة في كل نبتة. لا يتوقف عملنا عند حدود الزراعة، بل يمتد ليشمل تقنيات استخلاص متطورة نطبقها بأيدي خبراء فريقنا تحت معايير صارمة، لنحافظ على نقاء الألوفيرا وفعاليتها الحيوية. إن خبرة وتفاني فريق Aloe Care هي الضمان الحقيقي لتقديم منتجات طبيعية فائقة الجودة، مما جعلنا الخيار الأول لكل من يبحث عن التميز والثقة في عالم المستخلصات الطبيعية.</p>
+        </div>
+        <div class="brand-bar">
+            <span><i class="fas fa-certificate"></i> شركاء الثقة</span>
+            <span><i class="fas fa-flask"></i> استخلاص متقدم</span>
+            <span><i class="fas fa-trophy"></i> جودة عالمية</span>
+            <span><i class="fas fa-handshake"></i> شركات كبرى</span>
+        </div>
+        <p style="text-align:center; margin: 16px 0; color: #1b5a4b; font-weight: 400;">نحن أفراد نعمل بجد حتى وصلنا لثقة كبيرة إذا كانت في داخل الميديا أو خارجها، وقد عملنا مع شركات كبرى في هذا الاختصاص. شكراً لقراءتكم.</p>
+    </div>
+
+    <!-- About -->
+    <div id="page-about" class="page">
+        <div class="card">
+            <h2 class="section-title">من نحن</h2>
+            <p style="font-size:1.1rem;">نحن فريق Aloe Care، نعتبر أنفسنا الرواد في فن زراعة واستخلاص نبات الألوفيرا، حيث نجمع بين سنوات طويلة من الخبرة الميدانية والتطوير التقني المستمر. لم يكن نجاحنا وليد الصدفة، بل نتاج رحلة طويلة من الالتزام بأعلى معايير الجودة، مما مكننا من بناء شراكات استراتيجية ناجحة مع كبرى الشركات الرائدة في قطاعات المنتجات الطبيعية والتجميلية. نحن لا نقدم مجرد مستخلصات، بل نقدم عصارة خبرة فريقنا التي تعتمد عليها كبرى العلامات التجارية العالمية في تطوير منتجاتها. إن ثقة هؤلاء الشركاء بنا هي انعكاس مباشر لحرصنا على تقديم أنقى مستخلصات الألوفيرا وأكثرها فعالية، مما يجعلنا الشريك الموثوق الذي يضمن لعملائك التميز الذين يستحقونه.</p>
+        </div>
+    </div>
+
+    <!-- Products -->
+    <div id="page-products" class="page">
+        <h2 class="section-title">منتجاتنا</h2>
+        <div class="product-grid" id="productsGrid">
+            <!-- سيتم ملؤها بواسطة JavaScript -->
+        </div>
+        <p style="margin: 10px 0 0 14px; color: #216856;"><i class="fas fa-info-circle"></i> الأسعار للكيلو / للوحدة، قابلة للتعديل حسب الطلب.</p>
+    </div>
+
+    <!-- Reviews -->
+    <div id="page-reviews" class="page">
+        <h2 class="section-title">آراء عملائنا</h2>
+        <div class="reviews-section">
+            <div class="reviews-grid" id="reviewsGrid"></div>
+            <div class="add-review-area" id="addReviewArea">
+                <h4 style="color:#0f463b; margin-bottom:8px;"><i class="fas fa-star" style="color:#f5b342;"></i> أضف تقييمك</h4>
+                <div class="stars-select" id="starsSelect">
+                    <i class="fas fa-star" data-star="1"></i>
+                    <i class="fas fa-star" data-star="2"></i>
+                    <i class="fas fa-star" data-star="3"></i>
+                    <i class="fas fa-star" data-star="4"></i>
+                    <i class="fas fa-star" data-star="5"></i>
+                </div>
+                <textarea id="reviewText" placeholder="اكتب تقييمك هنا... (بحد أقصى 3 تقييمات يومياً)"></textarea>
+                <button class="review-submit-btn" id="submitReviewBtn"><i class="fas fa-paper-plane"></i> نشر التقييم</button>
+                <div id="reviewMessage" style="margin-top:10px; font-size:0.9rem;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact -->
+    <div id="page-contact" class="page">
+        <div class="card">
+            <h2 class="section-title">تواصل معنا</h2>
+            <div class="contact-line">
+                <span><i class="fab fa-whatsapp"></i> 01022017423</span>
+                <span><i class="fas fa-envelope"></i> Aloecare@gmail.com</span>
+                <span><i class="fas fa-phone"></i> 01015400229</span>
+            </div>
+            <p style="margin: 18px 0 6px; background: #dff0e8; padding: 14px 24px; border-radius: 80px; text-align:center;">
+                <i class="fas fa-clock"></i> ملاحظة: عادة يتم الرد وتأكيد تسجيل رقمنا، إذا عاودنا الاتصال بك في خلال 3 ساعات.
+            </p>
+            <a href="https://wa.me/201022017423" target="_blank" style="display:inline-block; background:#1a6b57; color:white; padding: 14px 34px; border-radius:80px; text-decoration:none; margin:12px 0; font-weight:600; transition:0.2s;"><i class="fab fa-whatsapp"></i> راسلنا على واتساب</a>
+        </div>
+    </div>
+
+    <!-- Order (سلة الطلب) -->
+    <div id="page-order" class="page">
+        <div class="order-box">
+            <h3 style="font-weight:300; font-size:2rem; color:#124b3e;"><i class="fas fa-shopping-cart"></i> سلة الطلب</h3>
+            <div id="cartItemsContainer" style="margin: 12px 0;"></div>
+            <div class="cart-summary">
+                <span>المجموع التقريبي</span>
+                <span><strong id="totalPrice">0</strong> جنيه</span>
+            </div>
+            <hr style="margin:16px 0; border-color:#caddd6;">
+            <p><i class="fas fa-edit"></i> أدخل بياناتك لتأكيد الطلب</p>
+            <input type="text" placeholder="المحافظة و العنوان التفصيلي" id="addressInput">
+            <input type="text" placeholder="رقم الهاتف (يبدأ بـ 01 - 11 رقم)" id="phoneInput" maxlength="11">
+            <button class="location-btn" id="addLocationBtn"><i class="fas fa-map-marker-alt"></i> إضافة موقعي الدقيق</button>
+            <div id="locationDisplay" style="margin:8px 0 12px; font-size:0.9rem; color:#1a6b57; background:#ecf8f2; padding:10px 18px; border-radius:60px; display:none;">
+                <i class="fas fa-check-circle"></i> تم إضافة الموقع: <span id="locationText"></span>
+            </div>
+            <button class="order-btn" id="confirmOrderBtn"><i class="fas fa-check"></i> تاكيد الطلب</button>
+            <div id="orderMessage" class="msg-confirm">✅ الأوردر في الطريق! شكراً لك.</div>
+            <p style="font-size:0.8rem; margin-top:10px; color:#256b59;"><i class="fas fa-info-circle"></i> سيتم التواصل معك خلال 3 ساعات لتأكيد الطلب.</p>
+        </div>
+    </div>
+
+    <!-- ===== ORDERS LIST ===== -->
+    <div id="page-orders" class="page">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <h2 class="section-title" style="margin:0;"><i class="fas fa-clipboard-list"></i> طلباتي</h2>
+            <button id="backFromOrders" style="background:#c4ddd2; border:none; padding:10px 24px; border-radius:60px; font-weight:600; cursor:pointer;">↩ رجوع</button>
+        </div>
+        <div id="ordersListContainer" class="orders-list"></div>
+        <div id="orderDetailContainer" style="display:none;"></div>
+    </div>
+
+    <!-- ===== ADMIN PANEL (خدمة العملاء) ===== -->
+    <div id="page-admin" class="page">
+        <div class="admin-panel" id="adminPanel">
+            <h3><i class="fas fa-headset"></i> لوحة خدمة العملاء</h3>
+            <div style="background:#e8f0fe; padding:12px 18px; border-radius:60px; margin-bottom:16px;">
+                <i class="fas fa-info-circle"></i> إدارة المنتجات - يمكنك إضافة أو حذف المنتجات (التعديل ينعكس على جميع المستخدمين فوراً)
+            </div>
+            <input type="text" id="adminProductName" placeholder="اسم المنتج (مثال: نبات في قصاري)">
+            <input type="text" id="adminProductPrice" placeholder="السعر (مثال: 250 جنيه)">
+            <input type="text" id="adminProductImage" placeholder="رابط الصورة (URL)">
+            <textarea id="adminProductNote" placeholder="ملاحظة (اختياري)" rows="2"></textarea>
+            <button class="admin-btn" id="adminAddProductBtn"><i class="fas fa-plus"></i> إضافة منتج</button>
+            <hr style="margin:20px 0; border-color:#d4ece1;">
+            <h4 style="color:#6c3483;">المنتجات الحالية:</h4>
+            <div id="adminProductList" class="product-list-admin"></div>
+        </div>
+        <button id="adminCloseBtn" style="background:#c4ddd2; border:none; padding:10px 24px; border-radius:60px; font-weight:600; cursor:pointer; margin-top:12px;">↩ رجوع للرئيسية</button>
+    </div>
+
+    <div class="footer-note">
+        <i class="fas fa-leaf" style="color:#1f7a63;"></i> AloeCare · نعمل بجد لنمنحك الأفضل.
+    </div>
+</div>
+
+<script>
+    (function() {
+        // ============================================================
+        //  1. تهيئة Firebase
+        // ============================================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyA6GcUjfR8Kk6R7QYaiWiwGRJJeiniWukU",
+            authDomain: "oooo-cea90.firebaseapp.com",
+            projectId: "oooo-cea90",
+            storageBucket: "oooo-cea90.firebasestorage.app",
+            messagingSenderId: "678881106852",
+            appId: "1:678881106852:web:7f95d1842dbb5455b8bf31",
+            measurementId: "G-N4PSX6JCBX"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const database = firebase.database();
+
+        // ============================================================
+        //  2. إعدادات عامة
+        // ============================================================
+        const BOT_TOKEN = '8865280286:AAHspBz8QhIHE858VKhM7qJi5-9hbNKF0eE';
+        const CHAT_ID = '7510413001';
+        const EDIT_HOURS = 20;
+        const REVIEW_DAYS = 14;
+        const MAX_REVIEWS_PER_DAY = 3;
+        const ADMIN_EMAILS = ['admin@aloecare.com'];
+
+        let currentUser = null;
+        let isAdmin = false;
+        let cart = [];
+        let orders = [];
+        let reviews = [];
+        let products = [];
+        let savedLocation = '';
+        let currentOrderId = null;
+        let selectedStar = 0;
+
+        // ============================================================
+        //  3. المنتجات - مخزنة في Firebase (مشاركة بين جميع المستخدمين)
+        // ============================================================
+        function loadProductsFromFirebase() {
+            database.ref('products').on('value', snapshot => {
+                const data = snapshot.val();
+                if (data && data.length > 0) {
+                    products = data;
+                } else {
+                    // استخدام المنتجات الافتراضية
+                    products = [
+                        { id: 1, name: 'نبات الصبار (أرض واسعة)', price: '', image: 'https://i.postimg.cc/Vvz6bQ9z/IMG-20260703-WA0017.jpg', note: 'تواصل واتساب', isWhatsApp: true },
+                        { id: 2, name: 'نبات في قصاري', price: '250 جنيه', image: 'https://i.postimg.cc/XNxNDPcD/IMG-20260703-WA0019.jpg', note: 'يختلف السعر حسب الطول. 35-50 سم بهذا السعر.' },
+                        { id: 3, name: 'هلام (الجل)', price: '200 جنيه / كيلو', image: 'https://i.postimg.cc/j5cTmWNf/IMG-20260703-WA0018.jpg', note: 'المادة الزجاجية عند تقشير النبات.' },
+                        { id: 4, name: 'المستخلص السائل', price: '250 جنيه / كيلو', image: 'https://i.postimg.cc/xTb7bJCL/IMG-20260703-WA0016.jpg', note: 'سائل شفاف، يحفظ تحت 15° مئوية، مدة 6 أشهر.' }
+                    ];
+                    saveProductsToFirebase();
+                }
+                localStorage.setItem('aloeProducts', JSON.stringify(products));
+                renderProducts();
+                // إذا كان الأدمن في صفحة الإدارة، تحديث القائمة
+                if (isAdmin && document.getElementById('page-admin').classList.contains('active-page')) {
+                    renderAdminProducts();
+                }
+            });
+        }
+
+        function saveProductsToFirebase() {
+            database.ref('products').set(products).catch(err => console.log('خطأ في حفظ المنتجات:', err));
+            localStorage.setItem('aloeProducts', JSON.stringify(products));
+        }
+
+        function saveProducts() {
+            saveProductsToFirebase();
+            renderProducts();
+        }
+
+        function renderProducts() {
+            const grid = document.getElementById('productsGrid');
+            if (!grid) return;
+            let html = '';
+            products.forEach(p => {
+                if (p.isWhatsApp) {
+                    html += `
+                        <div class="product-item" style="border-color: #a8d5c0; background: #f2fcf7;">
+                            <img src="${p.image}" alt="${p.name}">
+                            <div><strong>${p.name}</strong></div>
+                            <a href="https://wa.me/201022017423?text=أهلاً%20أريد%20معلومات%20عن%20${encodeURIComponent(p.name)}" target="_blank" class="whatsapp-only"><i class="fab fa-whatsapp"></i> تواصل واتساب</a>
+                        </div>
+                    `;
+                } else {
+                    html += `
+                        <div class="product-item">
+                            <img src="${p.image}" alt="${p.name}">
+                            <div><strong>${p.name}</strong></div>
+                            ${p.price ? `<div class="price">${p.price}</div>` : ''}
+                            ${p.note ? `<div class="note">${p.note}</div>` : ''}
+                            <button class="add-to-cart-btn" data-product='${JSON.stringify({name: p.name, price: p.price, image: p.image})}'><i class="fas fa-cart-plus"></i> أضف للسلة</button>
+                        </div>
+                    `;
+                }
+            });
+            grid.innerHTML = html;
+
+            document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const data = JSON.parse(this.dataset.product);
+                    addToCart(data);
+                });
+            });
+            updateCartUI();
+        }
+
+        // ============================================================
+        //  4. السلة
+        // ============================================================
+        function saveCartToFirebase() {
+            if (currentUser) {
+                database.ref('cart/' + currentUser.uid).set(cart);
+            }
+            localStorage.setItem('aloeCart', JSON.stringify(cart));
+        }
+
+        function saveCart() {
+            saveCartToFirebase();
+            updateCartUI();
+        }
+
+        function addToCart(product) {
+            cart.push({ ...product, id: Date.now() + Math.random() });
+            saveCart();
+            showToast('تم إضافة ' + product.name + ' إلى السلة');
+            document.getElementById('cartBadge').innerText = cart.length;
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            saveCart();
+        }
+
+        function updateCartUI() {
+            const container = document.getElementById('cartItemsContainer');
+            const totalEl = document.getElementById('totalPrice');
+            const badge = document.getElementById('cartBadge');
+            if (!container || !totalEl) return;
+
+            if (cart.length === 0) {
+                container.innerHTML = `<div style="background: #ecf8f2; border-radius: 40px; padding: 14px 20px; text-align:center; color:#3a7867;">🛒 السلة فارغة</div>`;
+                totalEl.innerText = '0';
+                if (badge) badge.innerText = '0';
+                return;
+            }
+
+            let html = '';
+            let total = 0;
+            cart.forEach((item, index) => {
+                const priceNum = parseInt(item.price) || 0;
+                total += priceNum;
+                html += `
+                    <div class="cart-item">
+                        <img src="${item.image || 'https://i.postimg.cc/x8QBKTbv/file-00000000126871f4ac3c9114e3ddb253-(1).png'}" alt="${item.name}">
+                        <div class="item-info">
+                            <div class="item-name">${item.name}</div>
+                            <div class="item-price">${item.price || 'سعر متغير'}</div>
+                        </div>
+                        <button class="remove-btn" data-index="${index}"><i class="fas fa-times"></i></button>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+            totalEl.innerText = total;
+            if (badge) badge.innerText = cart.length;
+
+            document.querySelectorAll('.remove-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const idx = parseInt(this.dataset.index);
+                    removeFromCart(idx);
+                });
+            });
+        }
+
+        // ============================================================
+        //  5. التقييمات
+        // ============================================================
+        function loadReviewsFromFirebase() {
+            database.ref('reviews').on('value', snapshot => {
+                const data = snapshot.val();
+                if (data) {
+                    reviews = data;
+                } else {
+                    reviews = [];
+                }
+                renderReviews();
+            });
+        }
+
+        function saveReviewsToFirebase() {
+            database.ref('reviews').set(reviews);
+            localStorage.setItem('aloeReviews', JSON.stringify(reviews));
+        }
+
+        function saveReviews() {
+            saveReviewsToFirebase();
+            renderReviews();
+        }
+
+        function renderReviews() {
+            const grid = document.getElementById('reviewsGrid');
+            if (!grid) return;
+            if (!reviews || reviews.length === 0) {
+                grid.innerHTML = `<div style="text-align:center; padding:30px; color:#3a7867; width:100%;">📝 لا توجد تقييمات بعد. كن أول من يقيّم!</div>`;
+                return;
+            }
+            const latest = reviews.slice(-3).reverse();
+            let html = '';
+            latest.forEach(r => {
+                const stars = '★'.repeat(r.rating) + '☆'.repeat(5 - r.rating);
+                html += `
+                    <div class="review-box">
+                        <div class="stars">${stars}</div>
+                        <div class="review-text">"${r.text}"</div>
+                        <div class="review-user">👤 ${r.user || 'مستخدم'}</div>
+                        <div class="review-date">${new Date(r.date).toLocaleDateString('ar-EG')}</div>
+                    </div>
+                `;
+            });
+            grid.innerHTML = html;
+        }
+
+        // ============================================================
+        //  6. الطلبات
+        // ============================================================
+        function loadOrdersFromFirebase() {
+            if (currentUser) {
+                database.ref('orders/' + currentUser.uid).on('value', snapshot => {
+                    const data = snapshot.val();
+                    if (data) {
+                        orders = data;
+                    } else {
+                        orders = [];
+                    }
+                    saveOrders();
+                    renderOrdersList();
+                });
+            } else {
+                orders = JSON.parse(localStorage.getItem('aloeOrders')) || [];
+                renderOrdersList();
+            }
+        }
+
+        function saveOrdersToFirebase() {
+            if (currentUser) {
+                database.ref('orders/' + currentUser.uid).set(orders);
+            }
+            localStorage.setItem('aloeOrders', JSON.stringify(orders));
+        }
+
+        function saveOrders() {
+            saveOrdersToFirebase();
+            document.getElementById('ordersBadge').innerText = orders.length;
+        }
+
+        function sendToTelegram(order) {
+            const message = `📦 طلب جديد!\n` +
+                `🆔 رقم الطلب: #${order.id}\n` +
+                `📍 العنوان: ${order.address}\n` +
+                `📞 الهاتف: ${order.phone}\n` +
+                `📋 المنتجات: ${order.items.join('، ')}\n` +
+                `🕐 الوقت: ${new Date(order.timestamp).toLocaleString('ar-EG')}\n` +
+                `${order.location ? `📍 الموقع: ${order.location}` : ''}`;
+
+            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    chat_id: CHAT_ID,
+                    text: message,
+                    parse_mode: 'HTML'
+                })
+            }).catch(err => console.log('خطأ في إرسال التليجرام:', err));
+        }
+
+        function addNewOrder(address, phone, items, location) {
+            const order = {
+                id: orders.length + 1,
+                timestamp: Date.now(),
+                address: address,
+                phone: phone,
+                items: items || [],
+                location: location || '',
+                status: 'قيد التوصيل 🚚',
+                user: currentUser ? currentUser.email : 'زائر'
+            };
+            orders.push(order);
+            saveOrders();
+            renderOrdersList();
+            sendToTelegram(order);
+        }
+
+        function isValidPhone(phone) {
+            return /^01\d{9}$/.test(phone);
+        }
+
+        function isOrderEditable(order) {
+            if (!order) return false;
+            const elapsed = (Date.now() - order.timestamp) / (1000 * 60 * 60);
+            return elapsed < EDIT_HOURS && order.status !== 'مكتمل ✅';
+        }
+
+        // ============================================================
+        //  7. عرض الطلبات
+        // ============================================================
+        function renderOrdersList() {
+            const container = document.getElementById('ordersListContainer');
+            const detailContainer = document.getElementById('orderDetailContainer');
+            if (!container) return;
+            detailContainer.style.display = 'none';
+            container.style.display = 'block';
+
+            if (!orders || orders.length === 0) {
+                container.innerHTML = `<div style="text-align:center; padding:40px; color:#3a7867;">📭 لا توجد طلبات بعد</div>`;
+                return;
+            }
+
+            let html = '';
+            const sorted = [...orders].reverse();
+            sorted.forEach((order, idx) => {
+                const realIdx = orders.length - 1 - idx;
+                const time = new Date(order.timestamp).toLocaleString('ar-EG');
+                const editable = isOrderEditable(order);
+                const remaining = Math.max(0, EDIT_HOURS - (Date.now() - order.timestamp) / (1000 * 60 * 60));
+                const isConfirmed = order.status === 'مكتمل ✅' || !editable;
+                html += `
+                    <div class="order-card" data-order-index="${realIdx}">
+                        <div class="order-info">
+                            <span class="order-id">📦 طلب #${order.id || realIdx+1}</span>
+                            <span class="order-time">🕐 ${time}</span>
+                            <span style="font-size:0.8rem; color:#2d6b59;">${order.items.join('، ') || 'لا يوجد منتجات'}</span>
+                            ${order.location ? `<span style="font-size:0.75rem; color:#2980b9;"><i class="fas fa-map-marker-alt"></i> ${order.location}</span>` : ''}
+                            ${!editable ? `<span class="edit-locked"><i class="fas fa-lock"></i> تم تأكيد الطلب</span>` : `<span style="font-size:0.7rem; color:#27ae60;"><i class="fas fa-edit"></i> متبقي: ${Math.floor(remaining)} ساعة ${Math.floor((remaining%1)*60)} دقيقة</span>`}
+                        </div>
+                        <span class="order-status ${isConfirmed ? 'confirmed' : ''}">${order.status || 'قيد التوصيل'}</span>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+
+            document.querySelectorAll('.order-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    const idx = parseInt(this.dataset.orderIndex);
+                    showOrderDetail(idx);
+                });
+            });
+        }
+
+        function showOrderDetail(index) {
+            const order = orders[index];
+            if (!order) return;
+            currentOrderId = index;
+
+            const container = document.getElementById('ordersListContainer');
+            const detailContainer = document.getElementById('orderDetailContainer');
+            container.style.display = 'none';
+            detailContainer.style.display = 'block';
+
+            const itemsStr = order.items.join('، ') || 'لا يوجد منتجات';
+            const time = new Date(order.timestamp).toLocaleString('ar-EG');
+            const editable = isOrderEditable(order);
+            const remaining = Math.max(0, EDIT_HOURS - (Date.now() - order.timestamp) / (1000 * 60 * 60));
+
+            detailContainer.innerHTML = `
+                <div class="order-detail-box">
+                    <button class="back-btn" id="backFromDetail">↩ رجوع للطلبات</button>
+                    <h3 style="color:#0f463b; margin-bottom:16px;">📦 تفاصيل الطلب #${order.id || index+1}</h3>
+                    <div style="background:#fef9e7; padding:8px 16px; border-radius:40px; margin-bottom:16px; font-size:0.85rem; color:#7d6608;">
+                        ${editable ? `🟢 يمكنك التعديل (متبقي: ${Math.floor(remaining)} ساعة ${Math.floor((remaining%1)*60)} دقيقة)` : '🔒 تم تأكيد الطلب - لا يمكن التعديل أو الحذف'}
+                    </div>
+                    <div class="detail-row">
+                        <label>🕐 وقت الطلب</label>
+                        <input type="text" value="${time}" disabled style="background:#ecf8f2;">
+                    </div>
+                    <div class="detail-row">
+                        <label>📋 المنتجات</label>
+                        <input type="text" value="${itemsStr}" disabled style="background:#ecf8f2;">
+                    </div>
+                    <div class="detail-row">
+                        <label>📍 العنوان ${editable ? '(قابل للتعديل)' : '(للقراءة فقط)'}</label>
+                        <input type="text" id="editAddress" value="${order.address || ''}" placeholder="المحافظة و العنوان" ${!editable ? 'disabled' : ''}>
+                    </div>
+                    <div class="detail-row">
+                        <label>📞 رقم الهاتف ${editable ? '(قابل للتعديل)' : '(للقراءة فقط)'}</label>
+                        <input type="text" id="editPhone" value="${order.phone || ''}" placeholder="رقم الهاتف" maxlength="11" ${!editable ? 'disabled' : ''}>
+                    </div>
+                    ${order.location ? `<div style="background:#ecf8f2; padding:10px 18px; border-radius:60px; margin-bottom:12px;"><i class="fas fa-map-marker-alt" style="color:#2980b9;"></i> الموقع الدقيق: ${order.location}</div>` : ''}
+                    <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:10px;">
+                        ${editable ? `<button id="saveOrderChanges" style="background:#1a6b57; color:white; border:none; padding:12px 28px; border-radius:60px; font-weight:600; cursor:pointer;">💾 حفظ التعديلات</button>` : ''}
+                        ${editable ? `<button id="deleteOrderBtn" style="background:#e74c3c; color:white; border:none; padding:12px 28px; border-radius:60px; font-weight:600; cursor:pointer;">🗑 حذف الطلب</button>` : ''}
+                    </div>
+                    <div style="margin-top:16px; padding:16px; background:#e3f5ed; border-radius:40px; text-align:center;">
+                        <i class="fas fa-truck" style="color:#1a6b57; font-size:1.4rem;"></i>
+                        <span style="font-weight:600; color:#0f463b;"> حالة الطلب: ${order.status || 'قيد التوصيل'}</span>
+                    </div>
+                    <div style="margin-top:16px; padding:14px; background:rgba(255,255,255,0.6); border-radius:60px; text-align:center; font-size:0.9rem; color:#1a5649;">
+                        <i class="fas fa-headset"></i> للدعم: 
+                        <a href="tel:01090070592" style="color:#1a6b57; text-decoration:none; font-weight:600;">01090070592</a> 
+                        <i class="fas fa-phone" style="margin-right:10px;"></i>
+                        <a href="tel:01286131419" style="color:#1a6b57; text-decoration:none; font-weight:600;">01286131419</a>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('backFromDetail').addEventListener('click', function() {
+                renderOrdersList();
+            });
+
+            const saveBtn = document.getElementById('saveOrderChanges');
+            if (saveBtn) {
+                saveBtn.addEventListener('click', function() {
+                    if (!isOrderEditable(order)) {
+                        alert('⚠️ انتهت مدة التعديل (20 ساعة)');
+                        return;
+                    }
+                    const newAddr = document.getElementById('editAddress').value.trim();
+                    const newPhone = document.getElementById('editPhone').value.trim();
+                    if (newPhone && !isValidPhone(newPhone)) {
+                        alert('⚠️ رقم الهاتف يجب أن يبدأ بـ 01 ويتكون من 11 رقم');
+                        return;
+                    }
+                    if (orders[currentOrderId]) {
+                        orders[currentOrderId].address = newAddr || orders[currentOrderId].address;
+                        orders[currentOrderId].phone = newPhone || orders[currentOrderId].phone;
+                        saveOrders();
+                        alert('✅ تم حفظ التعديلات بنجاح');
+                        showOrderDetail(currentOrderId);
+                    }
+                });
+            }
+
+            const delBtn = document.getElementById('deleteOrderBtn');
+            if (delBtn) {
+                delBtn.addEventListener('click', function() {
+                    if (!isOrderEditable(order)) {
+                        alert('⚠️ لا يمكن حذف طلب مؤكد');
+                        return;
+                    }
+                    if (confirm('هل أنت متأكد من حذف هذا الطلب؟')) {
+                        orders.splice(currentOrderId, 1);
+                        saveOrders();
+                        renderOrdersList();
+                        alert('تم حذف الطلب');
+                    }
+                });
+            }
+        }
+
+        // ============================================================
+        //  8. تأكيد الطلب
+        // ============================================================
+        document.getElementById('confirmOrderBtn').addEventListener('click', function() {
+            const addr = document.getElementById('addressInput')?.value || '';
+            let phone = document.getElementById('phoneInput')?.value || '';
+            phone = phone.replace(/\s/g, '');
+            if (addr.trim() === '') {
+                alert('الرجاء كتابة العنوان');
+                return;
+            }
+            if (!isValidPhone(phone)) {
+                alert('⚠️ رقم الهاتف يجب أن يبدأ بـ 01 ويتكون من 11 رقم');
+                return;
+            }
+            if (cart.length === 0) {
+                alert('أضف منتجات إلى السلة أولاً.');
+                return;
+            }
+            const items = cart.map(item => item.name);
+            const location = savedLocation || '';
+            addNewOrder(addr, phone, items, location);
+            setTimeout(() => {
+                const lastOrder = orders[orders.length - 1];
+                if (lastOrder && lastOrder.status === 'قيد التوصيل 🚚') {
+                    lastOrder.status = 'مكتمل ✅';
+                    saveOrders();
+                    renderOrdersList();
+                }
+            }, EDIT_HOURS * 60 * 60 * 1000);
+            cart = [];
+            saveCart();
+            document.getElementById('orderMessage').style.display = 'block';
+            showCarAnimation();
+            setTimeout(() => { document.getElementById('orderMessage').style.display = 'none'; }, 6000);
+            showPage('page-orders');
+            renderOrdersList();
+        });
+
+        // ============================================================
+        //  9. الموقع (GPS)
+        // ============================================================
+        document.getElementById('addLocationBtn').addEventListener('click', function() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function(pos) {
+                        const lat = pos.coords.latitude;
+                        const lng = pos.coords.longitude;
+                        savedLocation = `${lat}, ${lng}`;
+                        document.getElementById('locationText').innerText = savedLocation;
+                        document.getElementById('locationDisplay').style.display = 'block';
+                        const addrInput = document.getElementById('addressInput');
+                        if (addrInput.value.trim() === '') {
+                            addrInput.value = '📍 ' + savedLocation;
+                        } else {
+                            addrInput.value += ' | 📍 ' + savedLocation;
+                        }
+                        alert('✅ تم إضافة موقعك الدقيق');
+                    },
+                    function(err) {
+                        alert('⚠️ لم نتمكن من الحصول على موقعك. تأكد من تفعيل GPS.');
+                        console.log(err);
+                    }
+                );
+            } else {
+                alert('⚠️ متصفحك لا يدعم خاصية الموقع');
+            }
+        });
+
+        // ============================================================
+        //  10. أنيميشن السيارة
+        // ============================================================
+        const carOverlay = document.getElementById('carOverlay');
+        const closeCarBtn = document.getElementById('closeCarBtn');
+
+        function showCarAnimation() {
+            const car = document.getElementById('carAnim');
+            car.style.animation = 'none';
+            void car.offsetWidth;
+            car.style.animation = 'driveCar 4s ease-in-out forwards';
+            carOverlay.classList.add('active');
+            document.querySelectorAll('.wheels i').forEach(w => {
+                w.style.animation = 'spinWheel 0.5s linear infinite';
+            });
+        }
+
+        closeCarBtn.addEventListener('click', function() {
+            carOverlay.classList.remove('active');
+        });
+        carOverlay.addEventListener('click', function(e) {
+            if (e.target === carOverlay) carOverlay.classList.remove('active');
+        });
+
+        // ============================================================
+        //  11. Toast
+        // ============================================================
+        function showToast(msg) {
+            const old = document.querySelector('.toast-msg');
+            if (old) old.remove();
+            const div = document.createElement('div');
+            div.className = 'toast-msg';
+            div.style.cssText = `
+                position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+                background: #1a6b57; color: white; padding: 14px 28px;
+                border-radius: 60px; font-weight: 600; box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+                z-index: 1000; animation: fadeSlide 0.4s ease;
+                direction: rtl; max-width: 90%;
+            `;
+            div.innerText = msg;
+            document.body.appendChild(div);
+            setTimeout(() => { div.style.opacity = '0'; setTimeout(() => div.remove(), 400); }, 2500);
+        }
+
+        // ============================================================
+        //  12. نظام التقييمات
+        // ============================================================
+        document.querySelectorAll('#starsSelect i').forEach(star => {
+            star.addEventListener('click', function() {
+                selectedStar = parseInt(this.dataset.star);
+                document.querySelectorAll('#starsSelect i').forEach(s => {
+                    s.classList.toggle('active', parseInt(s.dataset.star) <= selectedStar);
+                });
+            });
+            star.addEventListener('mouseenter', function() {
+                const val = parseInt(this.dataset.star);
+                document.querySelectorAll('#starsSelect i').forEach(s => {
+                    s.style.color = parseInt(s.dataset.star) <= val ? '#f5b342' : '#ddd';
+                });
+            });
+            star.addEventListener('mouseleave', function() {
+                document.querySelectorAll('#starsSelect i').forEach(s => {
+                    s.style.color = parseInt(s.dataset.star) <= selectedStar ? '#f5b342' : '#ddd';
+                });
+            });
+        });
+
+        document.getElementById('submitReviewBtn').addEventListener('click', function() {
+            if (!currentUser) {
+                document.getElementById('reviewMessage').innerHTML = '<span style="color:#e74c3c;">⚠️ يجب تسجيل الدخول أولاً</span>';
+                return;
+            }
+            if (selectedStar === 0) {
+                document.getElementById('reviewMessage').innerHTML = '<span style="color:#e74c3c;">⚠️ اختر عدد النجوم</span>';
+                return;
+            }
+            const text = document.getElementById('reviewText').value.trim();
+            if (!text) {
+                document.getElementById('reviewMessage').innerHTML = '<span style="color:#e74c3c;">⚠️ اكتب تقييمك</span>';
+                return;
+            }
+
+            const userOrders = orders.filter(o => o.user === currentUser.email && o.status === 'مكتمل ✅');
+            const hasOrder = userOrders.some(o => {
+                const days = (Date.now() - o.timestamp) / (1000 * 60 * 60 * 24);
+                return days >= REVIEW_DAYS;
+            });
+            if (!hasOrder) {
+                document.getElementById('reviewMessage').innerHTML = `<span style="color:#e67e22;">⚠️ يجب أن يكون لديك طلب مكتمل منذ ${REVIEW_DAYS} يوم على الأقل لتقييم</span>`;
+                return;
+            }
+
+            const today = new Date().toDateString();
+            const todayReviews = reviews.filter(r => r.user === currentUser.email && new Date(r.date).toDateString() === today);
+            if (todayReviews.length >= MAX_REVIEWS_PER_DAY) {
+                document.getElementById('reviewMessage').innerHTML = `<span style="color:#e67e22;">⚠️ لقد قمت بـ ${MAX_REVIEWS_PER_DAY} تقييمات اليوم، يمكنك التقييم غداً</span>`;
+                return;
+            }
+
+            reviews.push({
+                user: currentUser.email,
+                rating: selectedStar,
+                text: text,
+                date: Date.now()
+            });
+            saveReviews();
+            document.getElementById('reviewText').value = '';
+            selectedStar = 0;
+            document.querySelectorAll('#starsSelect i').forEach(s => s.classList.remove('active'));
+            document.getElementById('reviewMessage').innerHTML = '<span style="color:#27ae60;">✅ تم نشر تقييمك بنجاح!</span>';
+            renderReviews();
+        });
+
+        // ============================================================
+        //  13. تسجيل الدخول / التسجيل
+        // ============================================================
+        let isLoginMode = true;
+
+        const authOverlay = document.getElementById('authOverlay');
+        const authTitle = document.getElementById('authTitle');
+        const authEmail = document.getElementById('authEmail');
+        const authPassword = document.getElementById('authPassword');
+        const authActionBtn = document.getElementById('authActionBtn');
+        const switchLink = document.getElementById('switchAuthLink');
+        const closeAuth = document.getElementById('closeAuth');
+        const authNavLink = document.getElementById('authNavLink');
+
+        function openAuth(mode = 'login') {
+            isLoginMode = (mode === 'login');
+            authTitle.innerText = isLoginMode ? 'تسجيل الدخول' : 'إنشاء حساب';
+            authActionBtn.innerText = isLoginMode ? 'دخول' : 'تسجيل';
+            switchLink.innerText = isLoginMode ? 'ليس لديك حساب؟ سجل الآن' : 'لديك حساب؟ سجل دخول';
+            authOverlay.classList.add('active');
+            authEmail.value = '';
+            authPassword.value = '';
+        }
+
+        function closeAuthOverlay() { authOverlay.classList.remove('active'); }
+
+        authNavLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (currentUser) {
+                if (confirm('تسجيل الخروج؟')) {
+                    auth.signOut();
+                }
+                return;
+            }
+            openAuth('login');
+        });
+
+        switchLink.addEventListener('click', function() {
+            isLoginMode = !isLoginMode;
+            authTitle.innerText = isLoginMode ? 'تسجيل الدخول' : 'إنشاء حساب';
+            authActionBtn.innerText = isLoginMode ? 'دخول' : 'تسجيل';
+            switchLink.innerText = isLoginMode ? 'ليس لديك حساب؟ سجل الآن' : 'لديك حساب؟ سجل دخول';
+        });
+
+        closeAuth.addEventListener('click', closeAuthOverlay);
+        authOverlay.addEventListener('click', function(e) {
+            if (e.target === authOverlay) closeAuthOverlay();
+        });
+
+        authActionBtn.addEventListener('click', function() {
+            const email = authEmail.value.trim();
+            const password = authPassword.value.trim();
+            if (!email || !password) {
+                alert('الرجاء ملء البريد وكلمة السر');
+                return;
+            }
+
+            if (isLoginMode) {
+                auth.signInWithEmailAndPassword(email, password)
+                    .then(userCredential => {
+                        currentUser = userCredential.user;
+                        isAdmin = ADMIN_EMAILS.includes(currentUser.email);
+                        closeAuthOverlay();
+                        alert('مرحباً ' + email);
+                        loadUserData();
+                    })
+                    .catch(error => {
+                        alert('❌ خطأ: ' + error.message);
+                    });
+            } else {
+                auth.createUserWithEmailAndPassword(email, password)
+                    .then(userCredential => {
+                        currentUser = userCredential.user;
+                        isAdmin = ADMIN_EMAILS.includes(currentUser.email);
+                        database.ref('cart/' + currentUser.uid).set([]);
+                        database.ref('orders/' + currentUser.uid).set([]);
+                        closeAuthOverlay();
+                        alert('✅ تم التسجيل بنجاح!');
+                        loadUserData();
+                    })
+                    .catch(error => {
+                        alert('❌ خطأ: ' + error.message);
+                    });
+            }
+        });
+
+        function updateAuthUI() {
+            if (currentUser) {
+                authNavLink.innerHTML = '<i class="fas fa-user"></i> ' + currentUser.email.split('@')[0] + ' (خروج)';
+            } else {
+                authNavLink.innerHTML = '<i class="fas fa-user"></i> تسجيل';
+            }
+        }
+
+        // ============================================================
+        //  14. تحميل بيانات المستخدم
+        // ============================================================
+        function loadUserData() {
+            if (currentUser) {
+                database.ref('cart/' + currentUser.uid).once('value').then(snapshot => {
+                    const data = snapshot.val();
+                    if (data) { cart = data; } else { cart = []; }
+                    updateCartUI();
+                });
+                database.ref('orders/' + currentUser.uid).once('value').then(snapshot => {
+                    const data = snapshot.val();
+                    if (data) { orders = data; } else { orders = []; }
+                    saveOrders();
+                    renderOrdersList();
+                });
+            }
+        }
+
+        // ============================================================
+        //  15. خدمة العملاء (الأدمن)
+        // ============================================================
+        const adminLoginOverlay = document.getElementById('adminLoginOverlay');
+        const adminEmail = document.getElementById('adminEmail');
+        const adminPassword = document.getElementById('adminPassword');
+        const adminLoginBtn = document.getElementById('adminLoginBtn');
+        const closeAdminLogin = document.getElementById('closeAdminLogin');
+
+        document.getElementById('adminNavLink').addEventListener('click', function(e) {
+            e.preventDefault();
+            if (isAdmin) {
+                showPage('page-admin');
+                renderAdminProducts();
+                return;
+            }
+            if (currentUser) {
+                alert('⛔ ليس لديك صلاحية للدخول إلى لوحة خدمة العملاء');
+                return;
+            }
+            adminLoginOverlay.classList.add('active');
+            adminEmail.value = 'admin@aloecare.com';
+            adminPassword.value = '';
+        });
+
+        closeAdminLogin.addEventListener('click', function() {
+            adminLoginOverlay.classList.remove('active');
+        });
+
+        adminLoginBtn.addEventListener('click', function() {
+            const email = adminEmail.value.trim();
+            const password = adminPassword.value.trim();
+            if (!email || !password) {
+                alert('الرجاء ملء البريد وكلمة السر');
+                return;
+            }
+
+            auth.signInWithEmailAndPassword(email, password)
+                .then(userCredential => {
+                    const user = userCredential.user;
+                    if (ADMIN_EMAILS.includes(user.email)) {
+                        currentUser = user;
+                        isAdmin = true;
+                        adminLoginOverlay.classList.remove('active');
+                        showPage('page-admin');
+                        renderAdminProducts();
+                        alert('✅ مرحباً بك في لوحة خدمة العملاء');
+                        loadUserData();
+                    } else {
+                        alert('⛔ هذا البريد ليس لديه صلاحية أدمن');
+                        auth.signOut();
+                    }
+                })
+                .catch(error => {
+                    alert('❌ خطأ في تسجيل الدخول: ' + error.message);
+                });
+        });
+
+        // ============================================================
+        //  16. إدارة المنتجات (لخدمة العملاء) - التعديل ينعكس على الكل
+        // ============================================================
+        function renderAdminProducts() {
+            const container = document.getElementById('adminProductList');
+            if (!container) return;
+            let html = '';
+            products.forEach((p, idx) => {
+                html += `
+                    <div class="admin-product-item">
+                        <span>${p.name}</span>
+                        <button class="del-prod" data-index="${idx}"><i class="fas fa-trash"></i></button>
+                    </div>
+                `;
+            });
+            container.innerHTML = html || '<span style="color:#3a7867;">لا توجد منتجات</span>';
+
+            document.querySelectorAll('.del-prod').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const idx = parseInt(this.dataset.index);
+                    if (confirm('⚠️ هل أنت متأكد من حذف هذا المنتج؟ سيتم حذفه من جميع المستخدمين فوراً.')) {
+                        products.splice(idx, 1);
+                        saveProducts(); // حفظ في Firebase (ينعكس على الكل)
+                        renderAdminProducts();
+                        // تحديث واجهة المنتجات لجميع المستخدمين (يتم عبر الـ listener)
+                    }
+                });
+            });
+        }
+
+        document.getElementById('adminAddProductBtn').addEventListener('click', function() {
+            const name = document.getElementById('adminProductName').value.trim();
+            const price = document.getElementById('adminProductPrice').value.trim();
+            const image = document.getElementById('adminProductImage').value.trim();
+            const note = document.getElementById('adminProductNote').value.trim();
+            if (!name || !image) {
+                alert('الرجاء ملء اسم المنتج ورابط الصورة');
+                return;
+            }
+            const newProduct = {
+                id: Date.now(),
+                name: name,
+                price: price || '',
+                image: image,
+                note: note || '',
+                isWhatsApp: false
+            };
+            products.push(newProduct);
+            saveProducts(); // حفظ في Firebase (ينعكس على الكل)
+            renderAdminProducts();
+            document.getElementById('adminProductName').value = '';
+            document.getElementById('adminProductPrice').value = '';
+            document.getElementById('adminProductImage').value = '';
+            document.getElementById('adminProductNote').value = '';
+            alert('✅ تم إضافة المنتج بنجاح (سيظهر لجميع المستخدمين)');
+        });
+
+        document.getElementById('adminCloseBtn').addEventListener('click', function() {
+            showPage('page-home');
+        });
+
+        // ============================================================
+        //  17. مراقبة حالة تسجيل الدخول
+        // ============================================================
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                currentUser = user;
+                isAdmin = ADMIN_EMAILS.includes(user.email);
+                updateAuthUI();
+                loadUserData();
+                loadReviewsFromFirebase();
+            } else {
+                currentUser = null;
+                isAdmin = false;
+                updateAuthUI();
+                cart = JSON.parse(localStorage.getItem('aloeCart')) || [];
+                orders = JSON.parse(localStorage.getItem('aloeOrders')) || [];
+                reviews = JSON.parse(localStorage.getItem('aloeReviews')) || [];
+                updateCartUI();
+                renderReviews();
+                renderOrdersList();
+            }
+        });
+
+        // ============================================================
+        //  18. التنقل بين الصفحات
+        // ============================================================
+        const pages = {
+            home: document.getElementById('page-home'),
+            about: document.getElementById('page-about'),
+            products: document.getElementById('page-products'),
+            reviews: document.getElementById('page-reviews'),
+            contact: document.getElementById('page-contact'),
+            order: document.getElementById('page-order'),
+            orders: document.getElementById('page-orders'),
+            admin: document.getElementById('page-admin')
+        };
+
+        function showPage(pageId) {
+            Object.values(pages).forEach(p => p.classList.remove('active-page'));
+            const target = document.getElementById(pageId);
+            if (target) target.classList.add('active-page');
+
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.page === pageId) btn.classList.add('active');
+            });
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+                if (link.dataset.page === pageId) link.classList.add('active');
+            });
+        }
+
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                const page = this.dataset.page;
+                if (page) {
+                    e.preventDefault();
+                    showPage(page);
+                }
+            });
+        });
+
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const page = this.dataset.page;
+                if (page) showPage(page);
+            });
+        });
+
+        document.getElementById('cartNavLink').addEventListener('click', function(e) {
+            e.preventDefault();
+            showPage('page-order');
+        });
+
+        document.getElementById('ordersNavLink').addEventListener('click', function(e) {
+            e.preventDefault();
+            showPage('page-orders');
+            renderOrdersList();
+        });
+
+        document.getElementById('backFromOrders').addEventListener('click', function() {
+            showPage('page-home');
+        });
+
+        // ============================================================
+        //  19. تهيئة الموقع
+        // ============================================================
+        loadProductsFromFirebase(); // استخدام real-time listener
+        updateCartUI();
+        loadReviewsFromFirebase();
+        loadOrdersFromFirebase();
+        showPage('page-home');
+    })();
+</script>
+
+</body>
+</html>
